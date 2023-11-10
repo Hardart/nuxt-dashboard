@@ -1,4 +1,5 @@
 export default defineEventHandler(event => {
+  const catalogBaseURL = '/catalog'
   return [
     { title: 'Dashboard', icon: 'heroicons:home', slug: 'dashboard', to: '/' },
     {
@@ -17,8 +18,8 @@ export default defineEventHandler(event => {
       icon: 'heroicons:cube',
       slug: 'catalog',
       childrens: [
-        { title: 'Категории', to: '/products/categories', slug: 'categories' },
-        { title: 'Продукты', to: '/products/products-list', slug: 'products' },
+        { title: 'Категории', to: `${catalogBaseURL}/categories`, slug: 'categories' },
+        { title: 'Продукты', to: `${catalogBaseURL}/products`, slug: 'products' },
       ],
     },
     {

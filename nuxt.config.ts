@@ -3,17 +3,17 @@ import { fileURLToPath } from 'url'
 export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
-  modules: ['@vueuse/nuxt', 'nuxt-icon', '@nuxtjs/apollo', 'nuxt-headlessui', '@morev/vue-transitions/nuxt', '@nuxtjs/tailwindcss'],
+  modules: [
+    '@vueuse/nuxt',
+    'nuxt-icon',
+    'nuxt-headlessui',
+    '@morev/vue-transitions/nuxt',
+    '@nuxtjs/tailwindcss',
+    '@pinia/nuxt',
+  ],
   headlessui: { prefix: 'H' },
-  apollo: {
-    clients: {
-      default: {
-        inMemoryCacheOptions: { addTypename: false },
-        httpEndpoint: 'http://localhost:4000',
-      },
-    },
-  },
+
   alias: {
-    '@api': fileURLToPath(new URL('./graphql/api/', import.meta.url)),
+    '@api': fileURLToPath(new URL('./api/', import.meta.url)),
   },
 })
