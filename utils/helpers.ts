@@ -6,11 +6,18 @@ export function removeEmptyKeys(obj: object) {
   })
 }
 
-export function addLinkToCategory(categories: ICategory[] | null): ICategory[] | null {
-  return categories?.map(cat => ({ ...cat, link: `/catalog/categories/${cat.id}` })) || null
+export function addLinkToCategories(categories: Maybe<ICategory[]> | null): Maybe<ICategory[]> {
+  return categories?.map(addLinkToCategory)
 }
-export function addLinkToProduct(products: IProduct[] | null): IProduct[] | null {
-  return products?.map(p => ({ ...p, link: `/catalog/products/${p.id}` })) || null
+export function addLinkToProducts(products: Maybe<IProduct[]>): Maybe<IProduct[]> {
+  return products?.map(addLinkToProduct) || null
+}
+
+export function addLinkToProduct(product: IProduct): IProduct {
+  return { ...product, link: `/catalog/products/${product.id}` }
+}
+export function addLinkToCategory(category: ICategory): ICategory {
+  return { ...category, link: `/catalog/categories/${category.id}` }
 }
 
 export async function delay(ms: number) {
@@ -19,4 +26,10 @@ export async function delay(ms: number) {
 
 export function deepCloneObject<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj))
+}
+
+export const isType = <Type>(thing: any): thing is Type => true
+
+export function keysFromObject<T extends object>(obj: T) {
+  return Object.keys(obj) as (keyof typeof obj)[]
 }

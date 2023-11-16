@@ -14,12 +14,12 @@ export const usePostsStore = defineStore('posts', () => {
   const posts = ref<IPost[] | null>(null)
   const firstInit = ref(false)
   const postsFromPage = ref<IPostCache>({})
-  const totalPosts = ref(null)
+  const totalPosts = ref(0)
   const postsPerPage = 7
 
   // GETTERS
   const getPosts = () => posts.value
-  const getPaginationPages = computed(() => Math.floor(+totalPosts.value / postsPerPage) + 1)
+  const getPaginationPages = computed(() => Math.ceil(+totalPosts.value / postsPerPage))
   // ACTIONS
   async function loadPosts(page: number) {
     const { data } = await apiGET.testData<IPost[]>(totalPosts, page)

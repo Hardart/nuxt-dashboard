@@ -1,82 +1,112 @@
 import apiGET from '@api/get'
 import apiPOST from '@api/post'
-import { useFilterStore } from './useFilterStore'
+
+interface IProductsData {
+  products: IProduct[]
+  productsCount: number
+}
 
 export const useProductsStore = defineStore('products', () => {
   // STATE
-  const products = ref<IProduct[] | null>(null)
-  const firstInit = ref(false)
+  // const { page, limit, itemsCount, pagesCount } = usePaginaton()
+  const productsList = ref<Maybe<IProduct[]>>(null)
   const singleProduct = ref<IProduct | null>(null)
+  const selectedProduct = ref<Maybe<IProduct>>(null)
+  const firstInit = ref(false)
+  const productsCount = ref(0)
 
   // GETTERS
-  const findById = (id: string) => products.value?.find(p => p.id == id) || null
-  const findBySlug = (slug: string, categorySlug: string) => products.value?.find(p => p.slug == slug && p.category.slug == categorySlug)
-
-  const sortProducts = () =>
-    products.value?.sort((a, b) => {
-      const { sortBy, orderBy } = storeToRefs(useFilterStore())
-      const valueA = a[sortBy.value]
-      const valueB = b[sortBy.value]
-      if (valueA !== undefined && valueB !== undefined) return valueA < valueB ? orderBy.value : -orderBy.value
-      else return 1
-    })
-  const getProductsList = () => {
-    const { search, categoryId } = storeToRefs(useFilterStore())
-
-    return sortProducts()?.filter(p => p.title.toLocaleLowerCase().includes(search.value) && p.category.id.includes(categoryId.value))
-  }
-  const getSingleProduct = computed(() => singleProduct)
-  const removeProduct = (id: string) => products.value?.filter(p => p.id !== id) || null
+  const findById = (id: string) => productsList.value?.find(p => p.id == id) || null
+  const filterById = (id: string) => productsList.value?.filter(p => p.id !== id) || null
 
   // ACTIONS
-  async function loadProductsList() {
-    if (firstInit.value) return
-    const { data, error, refresh } = await apiGET.getAllProducts<IProduct[]>()
-    firstInit.value = !firstInit.value
-    products.value = addLinkToProduct(data.value)
+
+  // ИНИЦИАЛИЗАЦИЯ ПРОДКУТОВ
+  async function initProductsList() {
+    const { getFilterParams } = useFilter()
+    const query = getFilterParams()
+    loadProductsList(query)
   }
 
-  async function updateProductsList(page?: number) {
-    const { data, error, refresh } = await apiGET.getAllProducts<IProduct[]>()
-    products.value = addLinkToProduct(data.value)
+  // ЗАГРУЗКА СПИСКА И КОЛИЧЕСТВА ПРОДКУТОВ
+  async function loadProductsList(query?: IFilter) {
+    const { data } = await apiGET.getAllProducts<IProductsData>(query)
+    const { products, productsCount: count } = satisfiedProductsData(data)
+    productsCount.value = count
+    productsList.value = addLinkToProducts(products)
   }
 
-  async function loadWithFilter(filter: object) {
-    const data = await apiPOST.filteredProduct<IProduct[]>(filter)
-    products.value = data
+  // ЗАГРУЗКА ПРОДКУТОВ С ФИЛЬТРОМ
+  async function loadProductsListWithFilter(filter: Ref<IFilter>) {
+    const route = useRoute()
+    const router = useRouter()
+    const { getFilterParams } = useFilter()
+    const query = getFilterParams(filter)
+
+    router.push({ path: route.path, query })
+    loadProductsList(query)
   }
 
   async function loadSingleProduct(id: string) {
     singleProduct.value = findById(id)
     if (!singleProduct.value) {
       const { data, error, refresh } = await apiGET.productById<IProduct>(id)
-
       singleProduct.value = data.value
     }
   }
 
   async function createOrUpdate(product: FormProduct) {
-    const id = await apiPOST.createOrUpdate<string>(product)
-    if (!id) return { status: 'fail' }
+    const newProduct = await apiPOST.createOrUpdate<IProduct>(product)
+    if (!newProduct) return { status: 'fail' }
     return { status: 'ok' }
   }
 
-  async function deleteOne(id: string) {
-    const { id: deletedId } = await apiPOST.productDelete<IProduct>(id)
-    if (deletedId) products.value = removeProduct(id)
+  async function deleteOne() {
+    const product = selectedProduct.value
+    if (!product) return
+    const { id: deletedId } = await apiPOST.productDelete<IProduct>(product.id)
+    if (!deletedId) return { status: 'fail' }
+    productsList.value = filterById(product.id)
+    productsCount.value--
+    return { status: 'ok' }
   }
 
+  function deleteOneWithAction(handler: () => void) {
+    return async () => {
+      await deleteOne()
+      handler()
+    }
+  }
+
+  //HELPERS
+
+  // function sortingHandler({ sortBy, sortOrder }: IFilter) {
+  //   return (a: IProduct, b: IProduct) => {
+  //     const valueA = a[sortBy]
+  //     const valueB = b[sortBy]
+  //     if (sortBy == 'title') return valueA > valueB ? sortOrder : -sortOrder
+  //     else return valueA < valueB ? sortOrder : -sortOrder
+  //   }
+  // }
+
   return {
-    products,
-    findById,
-    findBySlug,
+    productsList,
+    productsCount,
+    selectedProduct,
+
+    initProductsList,
     loadProductsList,
-    loadWithFilter,
+    findById,
     loadSingleProduct,
     createOrUpdate,
     deleteOne,
-    updateProductsList,
-    getProductsList,
-    getSingleProduct,
+    deleteOneWithAction,
+    loadProductsListWithFilter,
+    singleProduct,
   }
 })
+
+function satisfiedProductsData(data: Ref<IProductsData | null>) {
+  if (!data.value) throw createError('Some error with products first fetch')
+  return data.value
+}

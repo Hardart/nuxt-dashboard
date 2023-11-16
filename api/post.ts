@@ -1,7 +1,7 @@
 export default {
-  async filteredProduct<T>(filter: object) {
+  async filteredProduct<T>(filter: object, query: object) {
     const url = 'http://localhost:4000/api/filter-products'
-    return await $fetch<T>(url, { method: 'post', body: { filter } })
+    return await $fetch<T>(url, { method: 'post', body: { filter }, query })
   },
   async createOrUpdate<T>(product: FormProduct) {
     const url = 'http://localhost:4000/api/add-product'

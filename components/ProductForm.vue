@@ -5,9 +5,9 @@ const props = defineProps<{
   product?: IProduct
 }>()
 
-useCategoriesStore().loadCategoriesList()
+const { createOrUpdate } = useProductsStore()
 
-const categories = useCategoriesStore().getCategoriesList
+const categories = useCategoriesStore().categoryList
 const form: FormProduct = reactive(setForm(props.product))
 
 function setForm(product?: IProduct) {
@@ -50,16 +50,12 @@ const productTypes = [
 const onSubmit = async () => {
   // removeEmptyKeys(form)
   const requiredFields = ['title', 'slug', 'categoryId'] as const
-
-  const { status } = await useProductsStore().createOrUpdate(form)
+  if (!requiredFields.every(key => key in form && form[key] !== '0')) throw createError('Some of required fields are empty')
+  const { status } = await createOrUpdate(form)
   if (status == 'fail') throw createError('Some error on create or update product')
-  if (status == 'ok') console.log('ok')
-
-  // if (!requiredFields.every(key => key in o)) throw createError('Some of required fields are empty')
-  // const { data } = await apiPost.createProductMutation(form)
-  // if (data.createProduct)
-  //   await useRouter().push(`/products/categories/${props.product?.category.slug}`)
+  if (status == 'ok') await useRouter().push(`/catalog/products`)
 }
+const goBack = useRouter().back
 </script>
 
 <template>
@@ -97,7 +93,8 @@ const onSubmit = async () => {
         <div class="flex mr-auto">
           <UiSwitch v-model="form.isPublished" />
         </div>
-        <div class="flex justify-end">
+        <div class="flex justify-end space-x-2">
+          <button @click="goBack" class="px-4 py-2 bg-red-500 text-slate-100 rounded-lg" type="button">Назад</button>
           <button class="px-4 py-2 bg-blue-600 text-slate-100 rounded-lg" type="submit">Сохранить</button>
         </div>
       </div>

@@ -3,7 +3,7 @@ const props = withDefaults(
   defineProps<{
     label?: string
     options: any[]
-    modelValue: any
+    modelValue?: any
     isRequried?: boolean
     name?: string
     isEmptyValue?: boolean

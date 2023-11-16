@@ -1,23 +1,11 @@
 <script lang="ts" setup>
 import { usePostsStore } from '~/store/usePostsStore'
-const { posts, totalPosts, getPaginationPages } = storeToRefs(usePostsStore())
+const { posts, getPaginationPages } = storeToRefs(usePostsStore())
 const { loadPosts, loadPostsFromCache } = usePostsStore()
-const page = ref(1)
-loadPosts(page.value)
-const loadNextPage = () => {
-  page.value++
-  if (page.value < 1) return
-  loadPostsFromCache(page.value)
-}
-const loadPrevPage = () => {
-  page.value--
-  if (page.value < 1) return (page.value = 1)
-  loadPostsFromCache(page.value)
-}
-const setPage = (pageNumber: number) => {
-  page.value = pageNumber
-  loadPostsFromCache(page.value)
-}
+const { queryPage } = useQueryParams()
+const page = ref(queryPage() || 1)
+
+await loadPosts(page.value)
 </script>
 
 <template>
@@ -29,7 +17,5 @@ const setPage = (pageNumber: number) => {
       </div>
     </li>
   </ul>
-  <Pagination :total="getPaginationPages" @set-page="setPage" />
-  <button class="p-4 my-4 bg-emerald-600" @click="loadPrevPage">Prev Page</button>
-  <button class="p-4 my-4 bg-emerald-600" @click="loadNextPage">Next Page</button>
+  <Pagination :total-pages="getPaginationPages" v-model="page" :load-handler="loadPostsFromCache" />
 </template>

@@ -1,47 +1,103 @@
 <script lang="ts" setup>
 import { useCategoriesStore } from '~/store/useCategoriesStore'
-import { useFilterStore } from '~/store/useFilterStore'
-const { search, categoryId, sortBy, orderBy } = storeToRefs(useFilterStore())
-const { orderAsc, orderDesc, restoreDefaults } = useFilterStore()
+
+const { categoryList } = storeToRefs(useCategoriesStore())
+const categoryParams = computed(() =>
+  categoryList && categoryList.value ? [{ id: '', title: 'Не выбрано' }, ...categoryList.value] : null
+)
+
 const sortParams = [
-  { id: 'updatedAt', title: 'Дате обновления' },
   { id: 'createdAt', title: 'Дате создания' },
+  { id: 'updatedAt', title: 'Дате обновления' },
   { id: 'title', title: 'По названию' },
-  { id: 'isPublished', title: 'Опубликовано' },
+]
+const isPublished = [
+  { id: '', title: 'Не выбрано' },
+  { id: '1', title: 'Опубликовано' },
+  { id: '0', title: 'Не опубликовано' },
 ]
 
-const categories = useCategoriesStore().getCategoriesList
+const emit = defineEmits(['filter'])
+
+withDefaults(
+  defineProps<{
+    showSearch?: boolean
+    showCategoires?: boolean
+    showSorting?: boolean
+  }>(),
+  {
+    showSearch: true,
+    showCategoires: true,
+    showSorting: true,
+  }
+)
+
+const { filter, sortOrder, sortBy, restoreFilter, setSortParams } = useFilter()
+
+const emitFilter = () => {
+  setSortParams()
+  emit('filter', filter)
+}
+
+const ASC = () => {
+  sortOrder.value = 'asc'
+  emitFilter()
+}
+
+const DESC = () => {
+  sortOrder.value = 'desc'
+  emitFilter()
+}
+
+const restoreHandler = () => {
+  restoreFilter()
+  emitFilter()
+}
 </script>
 
 <template>
-  <div class="flex my-3 space-x-4">
-    <UiInput class="w-full" v-model.trim="search" label="Поиск по названию" placeholder="введите текст" icon="magnifying-glass" />
-    <UiSelect class="min-w-[160px]" label="Категория" v-if="categories" :options="categories" v-model="categoryId" />
-    <UiSelect class="min-w-[160px]" label="Сортировать по:" :options="sortParams" v-model="sortBy" :is-empty-value="false" />
-    <div class="flex items-end space-x-1">
-      <button
-        class="flex bg-white p-2 rounded-lg shadow-md border text-slate-400 active:shadow-sm"
-        :class="orderBy == 1 && 'text-black'"
-        @click="orderAsc"
-      >
-        <Icon name="heroicons:arrow-down" size="20" />
-      </button>
-      <button
-        class="flex bg-white p-2 rounded-lg shadow-md border text-slate-400 active:shadow-sm"
-        :class="orderBy !== 1 && 'text-black'"
-        @click="orderDesc"
-      >
-        <Icon name="heroicons:arrow-up" size="20" />
-      </button>
+  <!-- <UiInput
+    class="w-full"
+    v-if="showSearch"
+    label="Поиск по названию"
+    placeholder="введите текст"
+    icon="magnifying-glass"
+    v-model.trim="filter.search"
+  /> -->
+  <div class="flex items-end my-3 space-x-4 max-lg:hidden">
+    <UiSelect
+      class="min-w-[160px]"
+      label="Публикация"
+      v-if="categoryParams"
+      :options="isPublished"
+      v-model="filter.isPublished"
+      :is-empty-value="false"
+      @update:model-value="emitFilter"
+    />
+    <UiSelect
+      class="min-w-[160px]"
+      label="Категория"
+      v-if="categoryParams && showCategoires"
+      :options="categoryParams"
+      v-model="filter.categoryId"
+      :is-empty-value="false"
+      @update:model-value="emitFilter"
+    />
+    <UiSelect
+      class="min-w-[160px]"
+      label="Сортировать по:"
+      v-if="showSorting"
+      :options="sortParams"
+      v-model="sortBy"
+      :is-empty-value="false"
+      @update:model-value="emitFilter"
+    />
+    <div class="flex items-end space-x-1" v-if="showCategoires || showSearch || showSorting">
+      <UiFilterButton :icon="'arrow-down'" :class="sortOrder === 'asc' ? 'text-neutral-800' : 'text-neutral-400'" @click="ASC" />
+      <UiFilterButton :icon="'arrow-up'" :class="sortOrder === 'desc' ? 'text-neutral-800' : 'text-neutral-400'" @click="DESC" />
     </div>
-    <div class="flex items-end space-x-1">
-      <button
-        class="flex bg-white p-2 rounded-lg shadow-md border text-slate-400 active:shadow-sm"
-        :class="orderBy == 1 && 'text-black'"
-        @click="restoreDefaults"
-      >
-        <Icon name="heroicons:arrow-path" size="20" />
-      </button>
+    <div class="flex items-end space-x-1" v-if="showCategoires || showSearch || showSorting">
+      <UiFilterButton :icon="'arrow-path'" icon-class="group-active:rotate-180 rotate-0 transition-transform" @click="restoreHandler" />
     </div>
   </div>
 </template>

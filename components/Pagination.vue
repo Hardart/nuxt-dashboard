@@ -1,28 +1,72 @@
 <script setup lang="ts">
-defineProps<{
-  total: number
+const props = defineProps<{
+  totalPages: number
+  modelValue: number
+  loadHandler: () => void
 }>()
-defineEmits(['setPage'])
+const emits = defineEmits(['update:modelValue'])
+const prevPage = computed(() => (props.modelValue > 1 ? props.modelValue - 1 : 1))
+const nextPage = computed(() => (props.modelValue < props.totalPages ? props.modelValue + 1 : props.totalPages))
+
+const onPrev = () => {
+  emits('update:modelValue', prevPage.value)
+  props.loadHandler()
+}
+const onNext = () => {
+  emits('update:modelValue', nextPage.value)
+  props.loadHandler()
+}
+
+const updateCurrentPage = (value: number) => {
+  emits('update:modelValue', value)
+  props.loadHandler()
+}
 </script>
 <template>
-  <div>
+  <div class="my-4" v-if="totalPages > 1">
     <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-      <a href="#" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+      <NuxtLink :to="`?page=${prevPage}`" @click="onPrev" class="pagination__arrow">
         <span class="sr-only">Previous</span>
         <Icon name="heroicons:chevron-left" class="h-5 w-5" aria-hidden="true" />
-      </a>
-      <!-- Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" -->
-      <a href="#" aria-current="page" class="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">1</a>
-      <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">2</a>
-      <a href="#" class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex">3</a>
-      <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">...</span>
-      <a href="#" class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex">8</a>
-      <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">9</a>
-      <button @click="$emit('setPage', +($event.target as HTMLElement).innerText)" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">{{ total }}</button>
-      <a href="#" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+      </NuxtLink>
+
+      <NuxtLink :to="`?page=1`" @click="updateCurrentPage(+$event.target.innerText)" v-if="modelValue !== 1" class="pagination__item"
+        >1</NuxtLink
+      >
+      <NuxtLink class="pagination__dots" v-if="modelValue >= 4">...</NuxtLink>
+
+      <NuxtLink
+        :to="`?page=${prevPage}`"
+        @click="updateCurrentPage(+$event.target.innerText)"
+        v-if="modelValue >= 3"
+        class="pagination__item"
+        >{{ prevPage }}</NuxtLink
+      >
+
+      <NuxtLink class="pagination__item--active">{{ modelValue }}</NuxtLink>
+
+      <NuxtLink
+        :to="`?page=${nextPage}`"
+        @click="updateCurrentPage(+$event.target.innerText)"
+        v-if="modelValue <= totalPages - 2"
+        class="pagination__item"
+        >{{ nextPage }}</NuxtLink
+      >
+
+      <NuxtLink class="pagination__dots" v-if="modelValue <= totalPages - 3">...</NuxtLink>
+
+      <NuxtLink
+        :to="`?page=${totalPages}`"
+        @click="updateCurrentPage(+$event.target.innerText)"
+        v-if="modelValue !== totalPages"
+        class="pagination__item"
+        >{{ totalPages }}</NuxtLink
+      >
+
+      <NuxtLink :to="`?page=${nextPage}`" @click="onNext" class="pagination__arrow">
         <span class="sr-only">Next</span>
         <Icon name="heroicons:chevron-right" class="h-5 w-5" aria-hidden="true" />
-      </a>
+      </NuxtLink>
     </nav>
   </div>
 </template>

@@ -1,27 +1,37 @@
-import api from '@api/get'
+import apiGET from '@api/get'
+import apiPOST from '@api/post'
 
 export const useCategoriesStore = defineStore('categories', () => {
   // STATE
-  const categories = ref<ICategory[] | null>([])
+  const categoryList = ref<Maybe<ICategory[]>>(null)
+  const singleCategory = ref<Maybe<ICategory>>(null)
+  const selectedCategory = ref<Maybe<ICategory>>(null)
   const firstInit = ref(false)
+  const totalCategories = ref(0)
 
   // GETTERS
-  const getCategoriesList = computed(() => categories)
-  const getCategory = (slug: string) => categories.value?.find(cat => cat.slug === slug)
+  const findById = (id: string) => categoryList.value?.find(p => p.id == id)
+  const filterById = (id: string) => categoryList.value?.filter(p => p.id !== id)
+
+  // const getPaginationPages = computed(() => Math.ceil(totalProducts.value / productsLimit.value))
 
   // ACTIONS
-  const loadCategoriesList = async () => {
+  async function initCategoryList() {
     if (firstInit.value) return
-    const { data, refresh, error } = await api.getAllCategories<ICategory[]>()
+    loadCategoryList()
     firstInit.value = !firstInit.value
-    categories.value = addLinkToCategory(data.value)
-    return { status: 'ok' }
+  }
+
+  async function loadCategoryList() {
+    const { data, error } = await apiGET.getAllCategories<ICategory[]>()
+    if (error.value) console.log(error.value)
+    categoryList.value = addLinkToCategories(data.value)
   }
 
   return {
-    categories,
-    getCategoriesList,
-    loadCategoriesList,
-    getCategory,
+    categoryList,
+    selectedCategory,
+    initCategoryList,
+    findById,
   }
 })

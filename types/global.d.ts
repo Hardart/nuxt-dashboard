@@ -1,12 +1,13 @@
 export {}
+
 interface BaseItem {
   id: string
   title: string
   slug: string
   image?: string
-  link?: string
-  createdAt?: string
-  updatedAt?: string
+  link: string
+  createdAt: string
+  updatedAt: string
   isPublished: boolean
 }
 
@@ -19,7 +20,11 @@ interface IFeatures {
 
 declare global {
   type Maybe<T> = T | null | undefined
-  type FormProduct = Omit<IProduct, 'category' | 'link' | 'id'> & { categoryId: string }
+  type SortBy = 'createdAt' | 'updatedAt' | 'title' | 'isPublished'
+
+  type FormProduct = Omit<IProduct, 'category' | 'link' | 'id' | 'createdAt' | 'updatedAt'> & { categoryId: string }
+  type FormCategory = Omit<ICategory, 'link' | 'id' | 'createdAt' | 'updatedAt'>
+
   interface IProduct extends BaseItem {
     subtitle?: string
     description: string
@@ -30,7 +35,7 @@ declare global {
   }
 
   interface ICategory extends BaseItem {
-    products: IProduct[]
+    products?: IProduct[]
   }
 
   interface IQueryData {
@@ -47,5 +52,20 @@ declare global {
     childrens?: SidebarItem[]
     to?: string
     slug: string
+  }
+
+  interface IFilter {
+    categoryId: string
+    isPublished: string
+
+    sort: string
+  }
+
+  type Entries<T> = {
+    [K in keyof T]: [K, T[K]]
+  }[keyof T][]
+
+  interface ObjectConstructor {
+    entries<T extends object>(o: T): Entries<T>
   }
 }
