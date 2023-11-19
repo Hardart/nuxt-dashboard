@@ -3,7 +3,7 @@ import type { LocationQuery } from 'vue-router'
 type SortOrder = 'asc' | 'desc'
 const { getAppSettings } = useMeta()
 const settings = await getAppSettings()
-const { sort, publish, categories } = settings.value
+const { sort, publish, categories } = settings.value.filter
 const route = useRoute()
 const router = useRouter()
 const sortBy = ref('createdAt')

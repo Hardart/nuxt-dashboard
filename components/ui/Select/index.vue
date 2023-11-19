@@ -14,7 +14,7 @@ const props = withDefaults(
 )
 
 defineEmits(['update:model-value'])
-const options = props.isEmptyValue ? [{ id: '', title: '–' }, ...props.options] : props.options
+const options = props.options
 const defaultValue = computed(() => {
   return options.find(opn => opn.id == props.modelValue)?.title || options[0].title
 })

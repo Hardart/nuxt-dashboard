@@ -12,14 +12,21 @@ export default defineEventHandler(async event => {
     { id: '0', title: 'Не опубликовано' },
   ]
   const types = [
+    { id: '', title: 'Не выбрано' },
     { id: 'OKS', title: 'ОКС' },
     { id: 'ZKS', title: 'ЗКС' },
   ]
   const settings = {
-    sort,
-    publish,
-    categories: [{ id: '', title: 'Не выбрано' }, ...categories],
-    types,
+    filter: {
+      sort,
+      publish,
+      categories: [{ id: '', title: 'Не выбрано' }, ...categories],
+    },
+
+    productForm: {
+      types,
+      categories,
+    },
   }
   return settings
 })

@@ -1,18 +1,12 @@
 <script setup lang="ts">
-const { types, categories } = (await useMeta().getAppSettings()).value
+const settings = await useMeta().getAppSettings()
+const { categories, types } = settings.value.productForm
 defineProps<{
   product: ProductModel
 }>()
 
-// const form: FormProduct = reactive(setForm(props.product))
-
-// watch(
-//   () => props.product,
-//   () => console.log(props.product)
-// )
-
+defineEmits(['submit'])
 const onSubmit = async () => {
-  // // removeEmptyKeys(form)
   // const requiredFields = ['title', 'slug', 'categoryId'] as const
   // if (!requiredFields.every(key => key in form && form[key] !== '0')) throw createError('Some of required fields are empty')
   // const { status } = await createOrUpdate(form)
@@ -24,7 +18,7 @@ const goBack = useRouter().back
 
 <template>
   <Container class="py-7">
-    <form class="space-y-10" @submit.prevent="onSubmit" ref="itemFormData">
+    <form class="space-y-10" @submit.prevent="$emit('submit', product)" ref="itemFormData">
       <div class="grid grid-cols-3 max-md:grid-cols-1 max-md:space-y-3 gap-x-5">
         <UiInput is-requried label="Название" placeholder="Берёза повислая" v-model="product.title" name="title" />
         <UiInput label="Подназвание" placeholder="Двухгодовалая" v-model="product.subtitle" name="subtitle" />
