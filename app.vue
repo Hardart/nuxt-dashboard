@@ -1,7 +1,4 @@
-<script lang="ts" setup>
-import { useCategoriesStore } from './store/useCategoriesStore'
-useCategoriesStore().initCategoryList()
-</script>
+<script lang="ts" setup></script>
 <template>
   <div class="fixed w-full">
     <Header />

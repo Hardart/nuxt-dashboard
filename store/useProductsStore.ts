@@ -8,11 +8,29 @@ interface IProductsData {
 
 export const useProductsStore = defineStore('products', () => {
   // STATE
-  // const { page, limit, itemsCount, pagesCount } = usePaginaton()
   const productsList = ref<Maybe<IProduct[]>>(null)
   const singleProduct = ref<IProduct | null>(null)
   const selectedProduct = ref<Maybe<IProduct>>(null)
-  const firstInit = ref(false)
+  const productModel = ref<Maybe<ProductModel>>({
+    title: '',
+    categoryId: '0',
+    subtitle: '',
+    slug: '',
+    price: '',
+    description: '',
+    type: '',
+    image: '',
+    isPublished: false,
+    features: {
+      class: '',
+      price: '',
+      weight: '',
+      height: {
+        min: '',
+        max: '',
+      },
+    },
+  })
   const productsCount = ref(0)
 
   // GETTERS
@@ -21,41 +39,22 @@ export const useProductsStore = defineStore('products', () => {
 
   // ACTIONS
 
-  // ИНИЦИАЛИЗАЦИЯ ПРОДКУТОВ
-  async function initProductsList() {
-    const { getFilterParams } = useFilter()
-    const query = getFilterParams()
-    loadProductsList(query)
-  }
-
   // ЗАГРУЗКА СПИСКА И КОЛИЧЕСТВА ПРОДКУТОВ
-  async function loadProductsList(query?: IFilter) {
-    const { data } = await apiGET.getAllProducts<IProductsData>(query)
+  async function loadProductsList() {
+    const route = useRoute()
+    const { data } = await apiGET.getAllProducts<IProductsData>(route.query)
     const { products, productsCount: count } = satisfiedProductsData(data)
     productsCount.value = count
     productsList.value = addLinkToProducts(products)
   }
 
-  // ЗАГРУЗКА ПРОДКУТОВ С ФИЛЬТРОМ
-  async function loadProductsListWithFilter(filter: Ref<IFilter>) {
-    const route = useRoute()
-    const router = useRouter()
-    const { getFilterParams } = useFilter()
-    const query = getFilterParams(filter)
-
-    router.push({ path: route.path, query })
-    loadProductsList(query)
-  }
-
   async function loadSingleProduct(id: string) {
-    singleProduct.value = findById(id)
-    if (!singleProduct.value) {
-      const { data, error, refresh } = await apiGET.productById<IProduct>(id)
-      singleProduct.value = data.value
-    }
+    productModel.value = null
+    const { data } = await apiGET.productById<IProduct>(id)
+    createProductModel(data)
   }
 
-  async function createOrUpdate(product: FormProduct) {
+  async function createOrUpdate(product: ProductModel) {
     const newProduct = await apiPOST.createOrUpdate<IProduct>(product)
     if (!newProduct) return { status: 'fail' }
     return { status: 'ok' }
@@ -78,31 +77,25 @@ export const useProductsStore = defineStore('products', () => {
     }
   }
 
-  //HELPERS
-
-  // function sortingHandler({ sortBy, sortOrder }: IFilter) {
-  //   return (a: IProduct, b: IProduct) => {
-  //     const valueA = a[sortBy]
-  //     const valueB = b[sortBy]
-  //     if (sortBy == 'title') return valueA > valueB ? sortOrder : -sortOrder
-  //     else return valueA < valueB ? sortOrder : -sortOrder
-  //   }
-  // }
+  function createProductModel(product: Ref<Maybe<IProduct>>) {
+    if (product.value) {
+      const productClone = deepCloneObject<IProduct>(product.value)
+      productModel.value = { ...productModel.value, ...productClone, categoryId: product.value.category.id }
+      if ('category' in productModel.value) delete productModel.value.category
+    }
+  }
 
   return {
     productsList,
     productsCount,
     selectedProduct,
-
-    initProductsList,
     loadProductsList,
     findById,
     loadSingleProduct,
     createOrUpdate,
     deleteOne,
     deleteOneWithAction,
-    loadProductsListWithFilter,
-    singleProduct,
+    productModel,
   }
 })
 

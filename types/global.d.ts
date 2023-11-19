@@ -18,11 +18,14 @@ interface IFeatures {
   weight: number | string
 }
 
+type Entries<T> = {
+  [K in keyof T]: [K, T[K]]
+}[keyof T][]
+
 declare global {
   type Maybe<T> = T | null | undefined
   type SortBy = 'createdAt' | 'updatedAt' | 'title' | 'isPublished'
-
-  type FormProduct = Omit<IProduct, 'category' | 'link' | 'id' | 'createdAt' | 'updatedAt'> & { categoryId: string }
+  type ProductModel = Omit<IProduct, 'category' | 'link' | 'id' | 'createdAt' | 'updatedAt'> & { categoryId: string }
   type FormCategory = Omit<ICategory, 'link' | 'id' | 'createdAt' | 'updatedAt'>
 
   interface IProduct extends BaseItem {
@@ -53,17 +56,6 @@ declare global {
     to?: string
     slug: string
   }
-
-  interface IFilter {
-    categoryId: string
-    isPublished: string
-
-    sort: string
-  }
-
-  type Entries<T> = {
-    [K in keyof T]: [K, T[K]]
-  }[keyof T][]
 
   interface ObjectConstructor {
     entries<T extends object>(o: T): Entries<T>

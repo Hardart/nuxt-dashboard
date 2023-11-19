@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-const { sidebar } = await useMeta()
+const { getSidebar } = useMeta()
+const sidebar = await getSidebar()
 </script>
 
 <template>

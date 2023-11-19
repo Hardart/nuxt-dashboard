@@ -14,7 +14,7 @@ const deleteAction = (item: IProduct | ICategory) => {
 
 <template>
   <div>
-    <table class="w-full" v-if="items">
+    <table class="w-full" v-if="items && items.length == 10">
       <TableHead :heads="headers" />
       <tbody>
         <tr v-for="(item, index) in items">
