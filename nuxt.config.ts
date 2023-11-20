@@ -10,9 +10,13 @@ export default defineNuxtConfig({
     '@morev/vue-transitions/nuxt',
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
+    'nuxt-mongoose',
   ],
   headlessui: { prefix: 'H' },
-
+  mongoose: {
+    uri: process.env.MONGODB_URI,
+    modelsDir: 'models',
+  },
   alias: {
     '@api': fileURLToPath(new URL('./api/', import.meta.url)),
   },

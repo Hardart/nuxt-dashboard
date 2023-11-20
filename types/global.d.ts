@@ -60,4 +60,12 @@ declare global {
   interface ObjectConstructor {
     entries<T extends object>(o: T): Entries<T>
   }
+
+  type FilterQuery = { [key: string]: string | string[] }[]
+  interface IFilterQueryParams {
+    sort?: { [key: string]: SortOrder }
+    filter: FilterQuery
+    page: number
+    limit: number
+  }
 }
