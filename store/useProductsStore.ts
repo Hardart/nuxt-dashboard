@@ -8,10 +8,9 @@ interface IProductsData {
 
 export const useProductsStore = defineStore('products', () => {
   // STATE
-  const { productsData } = useFetchProducts()
+  const { productsData, productData } = useFetchProducts()
   const isPending = ref(true)
   const productsList = ref<Maybe<IProduct[]>>(null)
-  const singleProduct = ref<IProduct | null>(null)
   const selectedProduct = ref<Maybe<IProduct>>(null)
   const productModel = ref<Maybe<ProductModel>>({
     title: '',
@@ -52,9 +51,11 @@ export const useProductsStore = defineStore('products', () => {
     productsList.value = addLinkToProducts(products)
   }
 
-  async function loadSingleProduct(id: string) {
+  async function loadSingleProduct() {
     productModel.value = null
-    const { data } = await apiGET.productById<IProduct>(id)
+    isPending.value = true
+    const { data, pending } = await productData()
+    isPending.value = pending.value
     createProductModel(data)
   }
 

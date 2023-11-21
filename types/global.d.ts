@@ -66,9 +66,11 @@ declare global {
     entries<T extends object>(o: T): Entries<T>
   }
 
-  type FilterQuery = { [key: string]: string | string[] }[]
+  type FilterQuery = { [key: string]: string }
+  type SortQuery = { [key: string]: SortOrder }
+
   interface IFilterQueryParams {
-    sort?: { [key: string]: SortOrder }
+    sort: SortQuery
     filter: FilterQuery
     page: number
     limit: number

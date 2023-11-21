@@ -1,9 +1,13 @@
 import { Product } from '../models/Product'
 
 export default defineEventHandler(async event => {
-  const query = getQuery(event)
+  const { filter, sort, page, limit } = event.context.query as IFilterQueryParams
 
-  const products = await Product.find({ $and: [query] })
-  const productsCount = await Product.find({ $and: [query] }).count()
+  const products = await Product.find(filter)
+    .select(['title', 'createdAt', 'updatedAt', 'isPublished'])
+    .limit(limit)
+    .skip(page * limit)
+    .sort(sort || { createdAt: 'desc' })
+  const productsCount = await Product.find(filter).count()
   return { products, productsCount }
 })

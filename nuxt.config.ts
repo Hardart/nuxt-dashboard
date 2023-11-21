@@ -14,7 +14,7 @@ export default defineNuxtConfig({
   ],
   headlessui: { prefix: 'H' },
   mongoose: {
-    uri: process.env.MONGODB_URI,
+    uri: process.env.MONGODB_URI_LOCAL,
     modelsDir: 'models',
   },
 

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useProductsStore } from '@/store/useProductsStore'
 import { useModal } from '~/composables/useModal'
+
 const { deleteOneWithAction, loadProductsList } = useProductsStore()
 const { productsCount, selectedProduct, productsList } = storeToRefs(useProductsStore())
 const { isOpen, toggleOpen } = useModal()
