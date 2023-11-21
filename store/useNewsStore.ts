@@ -1,14 +1,6 @@
-import apiGET from '@api/get'
-import apiPOST from '@api/post'
-
-interface IProductsData {
-  products: IProduct[]
-  productsCount: number
-}
-
-export const useProductsStore = defineStore('products', () => {
+export const useNewsStore = defineStore('news', () => {
+  const { productsData, productData } = useFetchProducts()
   // STATE
-  const { productsData } = useFetchProducts()
   const isPending = ref(true)
   const productsList = ref<Maybe<IProduct[]>>(null)
   const singleProduct = ref<IProduct | null>(null)
@@ -51,34 +43,12 @@ export const useProductsStore = defineStore('products', () => {
     productsCount.value = count
     productsList.value = addLinkToProducts(products)
   }
-
-  async function loadSingleProduct(id: string) {
+  async function loadSingleProduct() {
     productModel.value = null
-    const { data } = await apiGET.productById<IProduct>(id)
+    isPending.value = true
+    const { data, pending } = await productData()
+    isPending.value = pending.value
     createProductModel(data)
-  }
-
-  async function createOrUpdate(product: ProductModel) {
-    const newProduct = await apiPOST.createOrUpdate<IProduct>(product)
-    if (!newProduct) return { status: 'fail' }
-    return { status: 'ok' }
-  }
-
-  async function deleteOne() {
-    const product = selectedProduct.value
-    if (!product) return
-    const { id: deletedId } = await apiPOST.productDelete<IProduct>(product.id)
-    if (!deletedId) return { status: 'fail' }
-    productsList.value = filterById(product.id)
-    productsCount.value--
-    return { status: 'ok' }
-  }
-
-  function deleteOneWithAction(handler: () => void) {
-    return async () => {
-      await deleteOne()
-      handler()
-    }
   }
 
   function createProductModel(product: Ref<Maybe<IProduct>>) {
@@ -93,12 +63,10 @@ export const useProductsStore = defineStore('products', () => {
     productsList,
     productsCount,
     selectedProduct,
+    isPending,
     loadProductsList,
     findById,
     loadSingleProduct,
-    createOrUpdate,
-    deleteOne,
-    deleteOneWithAction,
     productModel,
   }
 })

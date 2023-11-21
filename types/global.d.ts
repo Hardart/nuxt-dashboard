@@ -57,6 +57,11 @@ declare global {
     slug: string
   }
 
+  interface IProductsData {
+    products: IProduct[]
+    productsCount: number
+  }
+
   interface ObjectConstructor {
     entries<T extends object>(o: T): Entries<T>
   }

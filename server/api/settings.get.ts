@@ -1,6 +1,6 @@
 export default defineEventHandler(async event => {
   //
-  const categories: object[] = await $fetch('http://localhost:4000/api/categories')
+  const categories: object[] = await $fetch('/api/categories')
   const sort = [
     { id: 'createdAt', title: 'Дате создания' },
     { id: 'updatedAt', title: 'Дате обновления' },

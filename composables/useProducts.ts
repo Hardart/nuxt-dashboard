@@ -1,4 +1,4 @@
 export const useProducts = () => {
-  const products = useFetch<IProduct[]>('/api/products')
+  const products = useFetchProducts()
   return { products }
 }

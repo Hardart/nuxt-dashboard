@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { useProductsStore } from '~/store/useProductsStore'
-const { loadSingleProduct, createOrUpdate, loadProductsList } = useProductsStore()
-const route = useRoute()
-const { productModel: product } = storeToRefs(useProductsStore())
-const id = route.params?.productId
-if (id && typeof id !== 'string') throw createError('slug param is not a STRING')
+import { useNewsStore } from '~/store/useNewsStore'
+const { loadSingleProduct, loadProductsList } = useNewsStore()
+// const route = useRoute()
+const { productModel: product } = storeToRefs(useNewsStore())
+// const id = route.params?.productId
+// if (id && typeof id !== 'string') throw createError('slug param is not a STRING')
 
-loadSingleProduct(id)
+loadSingleProduct()
+
 const onSubmit = async (product: ProductModel) => {
   const requiredFields = ['title', 'slug', 'categoryId'] as const
   if (!requiredFields.every(key => key in product && product[key] !== '0')) throw createError('Some of required fields are empty')
-  const { status } = await createOrUpdate(product)
+  // const { status } = await createOrUpdate(product)
   if (status == 'fail') throw createError('Some error on create or update product')
   if (status == 'ok') {
     clearNuxtData()

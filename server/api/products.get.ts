@@ -1,7 +1,9 @@
-import productsController from '../controllers/products-controller'
 import { Product } from '../models/Product'
 
 export default defineEventHandler(async event => {
-  const products = Product.find().limit(200)
-  return products
+  const query = getQuery(event)
+
+  const products = await Product.find({ $and: [query] })
+  const productsCount = await Product.find({ $and: [query] }).count()
+  return { products, productsCount }
 })

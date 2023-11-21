@@ -17,6 +17,7 @@ export default defineNuxtConfig({
     uri: process.env.MONGODB_URI,
     modelsDir: 'models',
   },
+
   alias: {
     '@api': fileURLToPath(new URL('./api/', import.meta.url)),
   },
