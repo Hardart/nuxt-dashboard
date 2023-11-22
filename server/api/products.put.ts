@@ -1,8 +1,5 @@
-import { Product } from '../models/Product'
-import { Category } from '../models/Category'
-
 export default defineEventHandler(async event => {
-  const product = (await readBody(event)) as Product
+  const product: ProductModel = await readBody(event)
   if (!product.categoryId || !product.slug)
     throw createError({
       statusCode: 400,

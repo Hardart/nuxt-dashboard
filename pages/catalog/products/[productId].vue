@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCreateProducts } from '~/composables/useUpsertProduct'
+import { useCreateProducts } from '~/composables/useCreateProducts.js'
 import { useProductsStore } from '~/store/useProductsStore'
 const { loadSingleProduct, loadProductsList } = useProductsStore()
 const { upsertProduct } = useCreateProducts()
@@ -9,7 +9,7 @@ loadSingleProduct()
 const onSubmit = async (product: ProductModel) => {
   const requiredFields = ['title', 'slug', 'categoryId'] as const
   if (!requiredFields.every(key => key in product && product[key] !== '0')) throw createError('Some of required fields are empty')
-  const { data, error } = await upsertProduct(product)
+  const { error } = await upsertProduct(product)
 
   if (error && error.value) throw createError(error.value)
   clearNuxtData()

@@ -1,22 +1,31 @@
 <script setup lang="ts">
 import type { LocationQueryRaw } from 'vue-router'
-
-const route = useRoute()
-
+const { queryPage, queryLimit, route } = useQueryParams()
+const { defaults } = useFilter()
 const props = defineProps<{
-  page: number
   totalPages: number
+  onPageChangeHandler: () => Promise<void>
 }>()
-const emit = defineEmits(['update:page'])
 
-const pagesCount = computed(() => Math.ceil(props.totalPages / 10))
+const page = ref(queryPage())
+const limit = ref(queryLimit(defaults.value.limit))
+watch(
+  () => route.fullPath,
+  async () => {
+    await props.onPageChangeHandler()
+    page.value = queryPage()
+    limit.value = queryLimit(defaults.value.limit)
+  }
+)
 
-const prevPage = computed(() => (props.page > 1 ? props.page - 1 : 1))
-const nextPage = computed(() => (props.page < pagesCount.value ? props.page + 1 : pagesCount.value))
+const pagesCount = computed(() => Math.ceil(props.totalPages / limit.value))
+
+const prevPage = computed(() => (page.value > 1 ? page.value - 1 : 1))
+const nextPage = computed(() => (page.value < pagesCount.value ? page.value + 1 : pagesCount.value))
 const toPrev = () => ({ path: route.path, query: { ...route.query, page: prevPage.value } })
 const toNext = () => ({ path: route.path, query: { ...route.query, page: nextPage.value } })
 
-const updateCurrentPage = (value: number) => emit('update:page', value)
+const updateCurrentPage = (value: number) => (page.value = value)
 
 const firstPageQuery = computed(() => queryParamsWithoutPage(route.query))
 

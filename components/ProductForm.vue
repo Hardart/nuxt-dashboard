@@ -6,13 +6,6 @@ defineProps<{
 }>()
 
 defineEmits(['submit'])
-const onSubmit = async () => {
-  // const requiredFields = ['title', 'slug', 'categoryId'] as const
-  // if (!requiredFields.every(key => key in form && form[key] !== '0')) throw createError('Some of required fields are empty')
-  // const { status } = await createOrUpdate(form)
-  // if (status == 'fail') throw createError('Some error on create or update product')
-  // if (status == 'ok') await useRouter().push(`/catalog/products`)
-}
 const goBack = useRouter().back
 </script>
 

@@ -27,7 +27,7 @@
           <HDialogTitle>Подвердите действие</HDialogTitle>
           <div class="flex space-x-4 mt-4">
             <button class="py-2 px-3 rounded-lg bg-red-600 text-white w-full" @click="toggleState">Отменить</button>
-            <button class="py-2 px-3 rounded-lg bg-blue-600 text-white w-full" @click="confirmHandler">Применить</button>
+            <button class="py-2 px-3 rounded-lg bg-blue-600 text-white w-full" @click="accept">Применить</button>
           </div>
         </HDialogPanel>
       </HTransitionChild>
@@ -36,9 +36,14 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   confirmHandler: () => void
   toggleState: () => void
   isOpen: boolean
 }>()
+
+const accept = () => {
+  props.confirmHandler()
+  props.toggleState()
+}
 </script>

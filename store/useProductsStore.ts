@@ -1,6 +1,3 @@
-import apiGET from '@api/get'
-import apiPOST from '@api/post'
-
 interface IProductsData {
   products: IProduct[]
   productsCount: number
@@ -12,7 +9,7 @@ export const useProductsStore = defineStore('products', () => {
   const isPending = ref(true)
   const productsList = ref<Maybe<IProduct[]>>(null)
   const selectedProduct = ref<Maybe<IProduct>>(null)
-  const productModel = ref<Maybe<ProductModel>>({
+  const productModel = ref<ProductModel | null>({
     title: '',
     categoryId: '0',
     subtitle: '',
@@ -55,31 +52,18 @@ export const useProductsStore = defineStore('products', () => {
     productModel.value = null
     isPending.value = true
     const { data, pending } = await productData()
-    isPending.value = pending.value
     createProductModel(data)
-  }
-
-  async function createOrUpdate(product: ProductModel) {
-    const newProduct = await apiPOST.createOrUpdate<IProduct>(product)
-    if (!newProduct) return { status: 'fail' }
-    return { status: 'ok' }
+    isPending.value = pending.value
   }
 
   async function deleteOne() {
+    const { deleteById } = useDeleteProduct()
     const product = selectedProduct.value
     if (!product) return
-    const { id: deletedId } = await apiPOST.productDelete<IProduct>(product.id)
-    if (!deletedId) return { status: 'fail' }
-    productsList.value = filterById(product.id)
-    productsCount.value--
-    return { status: 'ok' }
-  }
-
-  function deleteOneWithAction(handler: () => void) {
-    return async () => {
-      await deleteOne()
-      handler()
-    }
+    const { id } = await deleteById(product.id)
+    if (!id) return
+    clearNuxtData()
+    await loadProductsList()
   }
 
   function createProductModel(product: Ref<Maybe<IProduct>>) {
@@ -97,9 +81,7 @@ export const useProductsStore = defineStore('products', () => {
     loadProductsList,
     findById,
     loadSingleProduct,
-    createOrUpdate,
     deleteOne,
-    deleteOneWithAction,
     productModel,
   }
 })

@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import type { LocationQuery } from 'vue-router'
-type SortOrder = 'asc' | 'desc'
-const { getAppSettings } = useMeta()
-const settings = await getAppSettings()
-const { sort, publish, categories } = settings.value.filter
+const filterKeys = ['categoryId', 'isPublished', 'sort', 'limit'] as const
+type FilterKey = (typeof filterKeys)[number]
+const { settings } = useMeta()
+const { sortBy, sortOrder, sortString, AscOrDesc, defaults } = useFilter()
+const { sort, publish, categories, limit } = settings.value!.filter
+
 const route = useRoute()
 const router = useRouter()
-const sortBy = ref('createdAt')
-const sortOrder = ref('desc')
 
 if (route.query.sort && typeof route.query.sort === 'string') {
   const [value1, value2] = route.query.sort.split('_')
@@ -15,12 +15,11 @@ if (route.query.sort && typeof route.query.sort === 'string') {
   sortOrder.value = value2
 }
 
-const sortString = computed(() => `${sortBy.value}_${sortOrder.value}`)
-
-const filter = reactive<LocationQuery>({
+const filter = reactive({
   isPublished: route.query.isPublished || '',
   categoryId: route.query.categoryId || '',
   sort: sortString.value,
+  limit: route.query.limit || defaults.value.limit,
 })
 
 watch([sortBy, sortOrder], () => {
@@ -28,32 +27,26 @@ watch([sortBy, sortOrder], () => {
   filterAction()
 })
 
-const AscOrDesc = (order: SortOrder = 'asc') => {
-  sortOrder.value = order
-}
-
 const cleanFilter = () => {
   const clone = { ...filter }
-  const keys = keysFromObject<LocationQuery>(clone)
-
-  function deleteEmptyKey(key: string) {
-    if (key == 'sort' && clone[key] == 'createdAt_desc') delete clone[key]
-    else if (clone[key] == '') delete clone[key]
-  }
-
+  const keys = keysFromObject(clone)
   keys.forEach(deleteEmptyKey)
+
+  function deleteEmptyKey(key: FilterKey) {
+    if (key in defaults.value && clone[key] === defaults.value[key]) delete clone[key]
+  }
 
   return clone
 }
 
-const restoreFilter = async () => {
-  const keys = keysFromObject<LocationQuery>(filter)
-  const restoreByKey = (key: string) => (filter[key] = '')
-
+const restoreFilter = () => {
+  const keys = keysFromObject(filter)
+  const restoreByKey = (key: FilterKey) => (filter[key] = defaults.value[key])
   keys.forEach(restoreByKey)
   sortBy.value = 'createdAt'
   sortOrder.value = 'desc'
-  await router.push({ path: route.path })
+
+  router.push({ path: route.path })
 }
 
 const filterAction = async () => {
@@ -87,6 +80,14 @@ const filterAction = async () => {
       label="Сортировать по:"
       :options="sort"
       v-model="sortBy"
+      :is-empty-value="false"
+      @update:model-value="filterAction"
+    />
+    <UiSelect
+      class="min-w-[160px]"
+      label="Показывать по:"
+      :options="limit"
+      v-model="filter.limit"
       :is-empty-value="false"
       @update:model-value="filterAction"
     />

@@ -1,5 +1,3 @@
-import { Product } from '../../../models/Product'
-
 export default defineEventHandler(async event => {
   const id = event.context?.params?.productId
   if (!id && typeof id !== 'string') return
