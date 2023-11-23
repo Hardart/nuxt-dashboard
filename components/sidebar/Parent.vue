@@ -10,7 +10,7 @@ defineProps<{
     <Icon v-if="item.icon" :name="item.icon" />
     <p>{{ item.title }}</p>
   </div>
-  <Icon v-if="item.childrens" name="heroicons:chevron-down" :class="open && 'rotate-180 transform'" class="text-xl" />
+  <Icon v-if="item.childrens" name="heroicons:chevron-down" :class="open && 'rotate-180 transform'" class="text-lg" />
 </template>
 
 <style scoped></style>

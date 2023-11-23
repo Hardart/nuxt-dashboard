@@ -1,5 +1,3 @@
-import { Product } from '../models/Product'
-
 export default defineEventHandler(async event => {
   const { filter, sort, page, limit } = event.context.query as IFilterQueryParams
 

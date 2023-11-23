@@ -1,20 +1,24 @@
 <script setup lang="ts">
 import type { LocationQueryRaw } from 'vue-router'
+import type { IFilterSettings } from '~/types/filter'
 const { queryPage, queryLimit, route } = useQueryParams()
-const { defaults } = useFilter()
+const defaultLimit = useState<string>('defaultLimit').value
+
 const props = defineProps<{
   totalPages: number
   onPageChangeHandler: () => Promise<void>
 }>()
 
 const page = ref(queryPage())
-const limit = ref(queryLimit(defaults.value.limit))
+
+const limit = ref(queryLimit(defaultLimit))
+
 watch(
   () => route.fullPath,
   async () => {
     await props.onPageChangeHandler()
     page.value = queryPage()
-    limit.value = queryLimit(defaults.value.limit)
+    limit.value = queryLimit(defaultLimit)
   }
 )
 
@@ -39,13 +43,13 @@ function queryParamsWithoutPage(obj: object): LocationQueryRaw {
   <div class="my-4" v-if="pagesCount > 1">
     <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
       <NuxtLink custom v-slot="{ navigate }" :to="toPrev()" v-if="page !== 1">
-        <a class="pagination__arrow cursor-pointer" @click="navigate">
+        <a class="pagination__arrow rounded-l-md cursor-pointer" @click="navigate">
           <span class="sr-only">Previous</span>
           <Icon name="heroicons:chevron-left" class="h-5 w-5" aria-hidden="true" />
         </a>
       </NuxtLink>
       <NuxtLink custom v-if="page === 1">
-        <a class="pagination__arrow">
+        <a class="pagination__arrow rounded-l-md">
           <span class="sr-only">Previous</span>
           <Icon name="heroicons:chevron-left" class="h-5 w-5" aria-hidden="true" />
         </a>
@@ -84,7 +88,7 @@ function queryParamsWithoutPage(obj: object): LocationQueryRaw {
       >
 
       <NuxtLink custom v-slot="{ navigate }" :to="toNext()" v-if="page !== pagesCount">
-        <a class="pagination__arrow cursor-pointer" @click="navigate">
+        <a class="pagination__arrow rounded-r-md cursor-pointer" @click="navigate">
           <span class="sr-only">Next</span>
           <Icon name="heroicons:chevron-right" class="h-5 w-5" aria-hidden="true" />
         </a>

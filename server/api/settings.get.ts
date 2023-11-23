@@ -29,5 +29,6 @@ export default defineEventHandler(async event => {
       categories,
     },
   }
+
   return settings
 })

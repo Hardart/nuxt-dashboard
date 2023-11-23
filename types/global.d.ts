@@ -67,12 +67,23 @@ declare global {
   }
 
   type FilterQuery = { [key: string]: string }
-  type SortQuery = { [key: string]: SortOrder }
+  type SortQuery = { [key: keyof SortParams]: SortOrder }
 
   interface IFilterQueryParams {
     sort: SortQuery
     filter: FilterQuery
     page: number
     limit: number
+  }
+
+  interface SortParams {
+    createdAt
+    updatedAt
+    title
+  }
+
+  interface IPageLimit {
+    limit: number | string
+    page: number | string
   }
 }

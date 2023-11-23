@@ -20,7 +20,7 @@ export function addLinkToCategory(category: ICategory): ICategory {
   return { ...category, link: `/catalog/categories/${category.id}` }
 }
 
-export async function delay(ms: number) {
+export async function delay(ms: number = 0) {
   return new Promise(res => setTimeout(res, ms))
 }
 
@@ -51,7 +51,7 @@ export function deepClone<T, U = T extends Array<infer V> ? V : never>(obj: T): 
 }
 
 const objectPrototype = (obj: object) => Object.getPrototypeOf(obj)
-const createObject = (obj: object) => objectPrototype(obj)
+export const createObject = (obj: object) => objectPrototype(obj)
 
 const numbers = '0123456789'
 export function randomWord(length: number, isWhitespace: boolean = false) {

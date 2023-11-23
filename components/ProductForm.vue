@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const settings = await useMeta().getAppSettings()
-const { categories, types } = settings.value.productForm
+const { settings } = useMeta()
+const { categories, types } = settings.value!.productForm
 defineProps<{
   product: ProductModel
 }>()

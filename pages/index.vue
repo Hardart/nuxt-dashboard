@@ -17,6 +17,8 @@ const items = Array(10)
   <main class="lg:px-6 relative h-full">
     <div class="flex flex-col h-full">
       <div v-for="item in items">{{ item.fullName }} - {{ item.email }}</div>
+      <Filter />
+      <ShowBy />
     </div>
   </main>
 </template>

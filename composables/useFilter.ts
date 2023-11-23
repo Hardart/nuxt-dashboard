@@ -1,16 +1,21 @@
-type SortOrder = 'asc' | 'desc'
+import type { LocationQuery } from 'vue-router'
 
-const defaults = ref({
-  limit: '10',
-  sort: 'createdAt_desc',
-  categoryId: '',
-  isPublished: '',
-})
-export const useFilter = () => {
-  const sortBy = ref('createdAt')
-  const sortOrder = ref('desc')
-  const sortString = computed(() => `${sortBy.value}_${sortOrder.value}`)
-  const AscOrDesc = (order: SortOrder = 'asc') => (sortOrder.value = order)
+export const useFilter = (query: LocationQuery) => {
+  const defaults = ref({
+    limit: '10',
+    sort: 'createdAt_desc',
+    categoryId: '',
+    isPublished: '',
+  })
 
-  return { sortBy, sortOrder, AscOrDesc, sortString, defaults }
+  const filter = ref({
+    isPublished: query.isPublished || '',
+    categoryId: query.categoryId || '',
+    sort: query.sort || defaults.value.sort,
+    limit: query.limit || defaults.value.limit,
+  })
+
+  const resetFilter = () => (filter.value = { ...defaults.value })
+
+  return { filter, resetFilter, defaults }
 }

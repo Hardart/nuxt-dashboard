@@ -1,17 +1,12 @@
 <script setup lang="ts">
-const props = withDefaults(
-  defineProps<{
-    label?: string
-    options: any[]
-    modelValue?: any
-    isRequried?: boolean
-    name?: string
-    isEmptyValue?: boolean
-  }>(),
-  {
-    isEmptyValue: true,
-  }
-)
+const props = defineProps<{
+  label?: string
+  options: any[]
+  modelValue?: any
+  isRequried?: boolean
+  name?: string
+  positon?: 'top' | 'bottom'
+}>()
 
 defineEmits(['update:model-value'])
 const options = props.options
@@ -30,8 +25,8 @@ const defaultValue = computed(() => {
       <div class="relative">
         <UiSelectButton :value="defaultValue" />
 
-        <TransitionExpand :duration="200">
-          <UiSelectOptions :options="options" />
+        <TransitionExpand :duration="150">
+          <UiSelectOptions :options="options" :positon="positon" />
         </TransitionExpand>
       </div>
     </HListbox>

@@ -2,7 +2,7 @@ interface IParent {
   initClose: (() => void)[]
   closeAll: () => void
 }
-const delay = (ms: number = 0) => new Promise(res => setTimeout(res, ms))
+
 const exec = async (fn: () => void) => {
   await delay()
   fn()

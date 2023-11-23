@@ -1,11 +1,14 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   items: IProduct[] | ICategory[]
   isShowCount?: boolean
   modelValue: Maybe<IProduct | ICategory>
 }>()
 const emits = defineEmits(['delete', 'update:modelValue'])
 const headers = ['Название продукта', 'Дата создания', 'Дата обновления', 'Удалить', 'Показать']
+const { queryPage, queryLimit, route } = useQueryParams()
+
+const slice = computed(() => +queryLimit('10') * (queryPage() - 1))
 const deleteAction = (item: IProduct | ICategory) => {
   emits('delete')
   emits('update:modelValue', item)
@@ -13,12 +16,12 @@ const deleteAction = (item: IProduct | ICategory) => {
 </script>
 
 <template>
-  <div>
+  <div class="">
     <table class="w-full" v-if="items.length">
       <TableHead :heads="headers" />
       <tbody>
         <tr v-for="(item, index) in items">
-          <td class="border border-slate-700 px-3 py-2 text-center text-sm">{{ index + 1 }}</td>
+          <td class="border border-slate-700 px-3 py-2 text-center text-sm">{{ index + 1 + slice }}</td>
           <td class="border border-slate-700 px-3 py-2">
             <NuxtLink :to="item.link" class="underline">{{ item.title }}</NuxtLink>
           </td>

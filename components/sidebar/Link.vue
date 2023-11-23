@@ -12,17 +12,13 @@ const { parent, initClose } = useSidebar()
     v-if="item.to"
     :to="item.to"
     active-class="text-sky-500"
-    class="flex justify-between items-center hover:bg-slate-400 rounded-md p-2"
+    class="flex justify-between items-center hover:bg-slate-400 rounded-md p-2 pl-3"
     :class="$route.path.includes(item.to) && item.to !== '/' && 'text-sky-500'"
   >
     <SidebarParent :item="item" :open="open" />
   </NuxtLink>
 
-  <HDisclosureButton
-    v-else
-    @click="initClose(close)"
-    class="flex justify-between items-center hover:bg-slate-400 rounded-md p-2"
-  >
+  <HDisclosureButton v-else @click="initClose(close)" class="flex justify-between items-center hover:bg-slate-400 rounded-md p-2 pl-3">
     <SidebarParent :open="open" :item="item" />
   </HDisclosureButton>
 </template>
