@@ -4,7 +4,7 @@ const { queryPage, queryLimit, route } = useQueryParams()
 
 const props = defineProps<{
   totalPages: number
-  onPageChangeHandler: () => Promise<void>
+  handler: () => Promise<void>
 }>()
 
 const page = ref(queryPage())
@@ -14,7 +14,7 @@ const limit = ref(queryLimit())
 watch(
   () => route.fullPath,
   async () => {
-    await props.onPageChangeHandler()
+    await props.handler()
     page.value = queryPage()
     limit.value = queryLimit()
   }

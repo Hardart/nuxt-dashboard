@@ -32,7 +32,7 @@ const onDelete = (item: IProduct) => {
       <div class="overflow-y-auto absolute inset-0 px-10 pb-3">
         <HdTable :delete-handler="onDelete" v-if="productsList" :items="productsList" type="products" />
         <div class="flex mt-3">
-          <Pagination :total-pages="productsCount" :on-page-change-handler="loadProductsList" />
+          <Pagination :total-pages="productsCount" :handler="loadProductsList" />
           <ShowBy />
         </div>
       </div>
