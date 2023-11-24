@@ -1,22 +1,12 @@
 <script setup lang="ts">
-import { useCreateProducts } from '~/composables/useCreateProducts.js'
 import { useProductsStore } from '~/store/useProductsStore'
-const { loadSingleProduct, loadProductsList } = useProductsStore()
-const { upsertProduct } = useCreateProducts()
-const { productModel: product } = storeToRefs(useProductsStore())
+const { loadSingleProduct, upsertOne } = useProductsStore()
+
+const { productModel: product, isSinglePending, isPending } = storeToRefs(useProductsStore())
 
 loadSingleProduct()
-const onSubmit = async (product: ProductModel) => {
-  const requiredFields = ['title', 'slug', 'categoryId'] as const
-  if (!requiredFields.every(key => key in product && product[key] !== '')) throw createError('Some of required fields are empty')
-  const { error } = await upsertProduct(product)
-
-  if (error && error.value) throw createError(error.value)
-  clearNuxtData()
-  await loadProductsList()
-  useRouter().back()
-}
 </script>
 <template>
-  <ProductForm v-if="product" v-model:product="product" @submit="onSubmit" />
+  <h2 v-if="isSinglePending">Loading</h2>
+  <ProductForm v-else v-model:product="product" :is-pending="isPending" @submit="upsertOne" />
 </template>

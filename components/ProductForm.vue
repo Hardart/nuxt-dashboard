@@ -4,6 +4,7 @@ const { categories, types } = useState<IProductForm>('productForm').value
 
 defineProps<{
   product: ProductModel
+  isPending?: boolean
 }>()
 
 defineEmits(['submit'])
@@ -47,7 +48,9 @@ const goBack = useRouter().back
         </div>
         <div class="flex justify-end space-x-2">
           <button @click="goBack" class="px-4 py-2 bg-red-500 text-slate-100 rounded-lg" type="button">Назад</button>
-          <button class="px-4 py-2 bg-blue-600 text-slate-100 rounded-lg" type="submit">Сохранить</button>
+          <button class="px-4 py-2 bg-blue-600 text-slate-100 rounded-lg disabled:bg-neutral-400" :disabled="isPending" type="submit">
+            Сохранить
+          </button>
         </div>
       </div>
     </form>

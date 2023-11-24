@@ -6,7 +6,8 @@ interface IProductsData {
 export const useProductsStore = defineStore('products', () => {
   // STATE
   const { productsData, productData } = useFetchProducts()
-  const isPending = ref(true)
+  const isPending = ref(false)
+  const isSinglePending = ref(true)
   const productsList = ref<Maybe<IProduct[]>>(null)
   const selectedProduct = ref<Maybe<IProduct>>(null)
   const productModel = ref<ProductModel>({
@@ -49,10 +50,10 @@ export const useProductsStore = defineStore('products', () => {
   }
 
   async function loadSingleProduct() {
-    isPending.value = true
+    isSinglePending.value = true
     const { data, pending } = await productData()
     createProductModel(data)
-    isPending.value = pending.value
+    isSinglePending.value = pending.value
   }
 
   async function deleteOne() {
@@ -73,14 +74,31 @@ export const useProductsStore = defineStore('products', () => {
     }
   }
 
+  async function upsertOne(product: ProductModel) {
+    isPending.value = true
+    const router = useRouter()
+    const { upsertProduct } = useCreateProducts()
+    const requiredFields = ['title', 'slug', 'categoryId'] as const
+    if (!requiredFields.every(key => key in product && product[key] !== '')) throw createError('Some of required fields are empty')
+    const { error } = await upsertProduct(product)
+
+    if (error && error.value) throw createError(error.value)
+    router.go(-1)
+    clearNuxtData()
+    loadProductsList()
+  }
+
   return {
     productsList,
     productsCount,
     selectedProduct,
+    isPending,
+    isSinglePending,
     loadProductsList,
     findById,
     loadSingleProduct,
     deleteOne,
+    upsertOne,
     productModel,
   }
 })

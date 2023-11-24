@@ -10,8 +10,6 @@ loadProductsList()
 const onDelete = (item: IProduct) => {
   selectedProduct.value = item
   toggleOpen()
-  // console.log(item)
-  // console.log('hello')
 }
 </script>
 
