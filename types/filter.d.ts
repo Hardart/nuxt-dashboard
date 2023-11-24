@@ -1,7 +1,5 @@
-const filterKeys = ['categoryId', 'isPublished', 'sort', 'limit'] as const
 const orderKeys = ['asc', 'desc'] as const
-const sortKeys = ['title', 'createdAt', 'updatedAt'] as const
-
+type FilterItem<T> = { id: T; title: string }
 interface ISortKeys {
   title: string
   createdAt: string
@@ -16,7 +14,7 @@ interface IFilterKeys {
 
 interface IFilterSettings {
   sort: { id: SortKey; title: string }[]
-  categories: { id: string; title: string }[]
+  categories: FilterItem<string>[]
   publish: { id: string; title: string }[]
   limit: { id: string; title: string }[]
   defaults: IFilterKeys

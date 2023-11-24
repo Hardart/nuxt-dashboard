@@ -1,7 +1,6 @@
 export default defineEventHandler(async event => {
   //
-  const categoriesList: object[] = await $fetch('/api/categories')
-  const categories = [{ id: '', title: 'Не выбрано' }, ...categoriesList]
+
   const sort = [
     { id: 'createdAt', title: 'Дате создания' },
     { id: 'updatedAt', title: 'Дате обновления' },
@@ -21,14 +20,14 @@ export default defineEventHandler(async event => {
   const defaults = {
     categoryId: '',
     isPublished: '',
-    limit: '10',
+    limit: '5',
     sort: 'createdAt_desc',
   }
 
   return {
     sort,
     publish,
-    categories,
+    categories: [] as object[],
     limit,
     defaults,
   }

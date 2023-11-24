@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   label?: string
-  options: any[]
+  options: { id: string; title: string }[]
   modelValue?: any
   isRequried?: boolean
   name?: string

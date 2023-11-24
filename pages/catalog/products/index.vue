@@ -7,6 +7,12 @@ const { productsCount, selectedProduct, productsList } = storeToRefs(useProducts
 const { isOpen, toggleOpen } = useModal()
 
 loadProductsList()
+const onDelete = (item: IProduct) => {
+  selectedProduct.value = item
+  toggleOpen()
+  // console.log(item)
+  // console.log('hello')
+}
 </script>
 
 <template>
@@ -24,8 +30,8 @@ loadProductsList()
 
     <div class="flex-grow relative">
       <div class="overflow-y-auto absolute inset-0 px-10 pb-3">
-        <TableProducts v-model="selectedProduct" @delete="toggleOpen" v-if="productsList" :items="productsList" type="products" />
-        <div class="flex justify-between">
+        <HdTable :delete-handler="onDelete" v-if="productsList" :items="productsList" type="products" />
+        <div class="flex mt-3">
           <Pagination :total-pages="productsCount" :on-page-change-handler="loadProductsList" />
           <ShowBy />
         </div>

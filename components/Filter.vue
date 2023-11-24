@@ -2,7 +2,7 @@
 import type { FilterKey, IFilterSettings, IFilterKeys, Sorting, OrderKey } from '@/types/filter'
 const route = useRoute()
 const router = useRouter()
-const { publish, categories, sort, defaults } = await $fetch<IFilterSettings>('/api/filter-params')
+const { publish, categories, sort, defaults } = useState<IFilterSettings>('filterParams').value
 
 const filter = ref<IFilterKeys>({ ...defaults })
 const splitSortDefault = () => defaults.sort.split('_') as Sorting
@@ -52,7 +52,7 @@ watch(
 </script>
 
 <template>
-  <div class="flex items-end my-3 space-x-3 max-lg:hidden">
+  <div class="flex justify-end items-end my-3 space-x-3 max-lg:hidden">
     <UiSelect class="min-w-[160px]" label="Публикация" :options="publish" v-model="filter.isPublished" />
     <UiSelect class="min-w-[160px]" label="Категория" :options="categories" v-model="filter.categoryId" />
     <UiSelect class="min-w-[160px]" label="Сортировать по:" :options="sort" v-model="sorting[0]" />

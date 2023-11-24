@@ -27,7 +27,7 @@ watch([showBy], () => {
 </script>
 
 <template>
-  <div class="flex space-x-2 max-lg:hidden">
+  <div class="flex ml-auto space-x-2 max-lg:hidden">
     <UiSelect class="flex items-center gap-1 whitespace-nowrap" positon="top" label="Показывать по:" :options="limit" v-model="showBy" />
   </div>
 </template>

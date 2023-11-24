@@ -6,6 +6,6 @@ export default defineEventHandler(async event => {
     .limit(limit)
     .skip(page * limit)
     .sort(sort || { createdAt: 'desc' })
-  const productsCount = await Product.find(filter).count()
+  const productsCount = await Product.find(filter).countDocuments()
   return { products, productsCount }
 })

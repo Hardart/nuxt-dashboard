@@ -41,10 +41,6 @@ declare global {
     products?: IProduct[]
   }
 
-  interface IQueryData {
-    categories: ICategory[]
-  }
-
   interface IMetaItem extends BaseItem {
     childrens?: IMetaItem[]
   }
@@ -64,26 +60,5 @@ declare global {
 
   interface ObjectConstructor {
     entries<T extends object>(o: T): Entries<T>
-  }
-
-  type FilterQuery = { [key: string]: string }
-  type SortQuery = { [key: keyof SortParams]: SortOrder }
-
-  interface IFilterQueryParams {
-    sort: SortQuery
-    filter: FilterQuery
-    page: number
-    limit: number
-  }
-
-  interface SortParams {
-    createdAt
-    updatedAt
-    title
-  }
-
-  interface IPageLimit {
-    limit: number | string
-    page: number | string
   }
 }

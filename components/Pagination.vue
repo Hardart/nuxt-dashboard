@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { LocationQueryRaw } from 'vue-router'
-import type { IFilterSettings } from '~/types/filter'
 const { queryPage, queryLimit, route } = useQueryParams()
-const defaultLimit = useState<string>('defaultLimit').value
 
 const props = defineProps<{
   totalPages: number
@@ -11,14 +9,14 @@ const props = defineProps<{
 
 const page = ref(queryPage())
 
-const limit = ref(queryLimit(defaultLimit))
+const limit = ref(queryLimit())
 
 watch(
   () => route.fullPath,
   async () => {
     await props.onPageChangeHandler()
     page.value = queryPage()
-    limit.value = queryLimit(defaultLimit)
+    limit.value = queryLimit()
   }
 )
 
@@ -40,7 +38,7 @@ function queryParamsWithoutPage(obj: object): LocationQueryRaw {
 }
 </script>
 <template>
-  <div class="my-4" v-if="pagesCount > 1">
+  <div v-if="pagesCount > 1">
     <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
       <NuxtLink custom v-slot="{ navigate }" :to="toPrev()" v-if="page !== 1">
         <a class="pagination__arrow rounded-l-md cursor-pointer" @click="navigate">

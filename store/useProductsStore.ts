@@ -9,9 +9,9 @@ export const useProductsStore = defineStore('products', () => {
   const isPending = ref(true)
   const productsList = ref<Maybe<IProduct[]>>(null)
   const selectedProduct = ref<Maybe<IProduct>>(null)
-  const productModel = ref<ProductModel | null>({
+  const productModel = ref<ProductModel>({
     title: '',
-    categoryId: '0',
+    categoryId: '',
     subtitle: '',
     slug: '',
     price: '',
@@ -49,7 +49,6 @@ export const useProductsStore = defineStore('products', () => {
   }
 
   async function loadSingleProduct() {
-    productModel.value = null
     isPending.value = true
     const { data, pending } = await productData()
     createProductModel(data)

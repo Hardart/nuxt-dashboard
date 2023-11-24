@@ -1,6 +1,7 @@
 <script setup lang="ts">
-const { settings } = useMeta()
-const { categories, types } = settings.value!.productForm
+import type { IProductForm } from '~/types/settings'
+const { categories, types } = useState<IProductForm>('productForm').value
+
 defineProps<{
   product: ProductModel
 }>()
