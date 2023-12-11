@@ -8,7 +8,6 @@ const props = defineProps<{
 }>()
 
 const page = ref(queryPage())
-
 const limit = ref(queryLimit())
 
 watch(
