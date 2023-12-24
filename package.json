@@ -14,7 +14,7 @@
     "@nuxt/devtools": "latest",
     "@nuxtjs/tailwindcss": "^6.8.0",
     "@vueuse/nuxt": "^10.5.0",
-    "nuxt": "^3.8.1",
+    "nuxt": "^3.8.2",
     "nuxt-headlessui": "^1.1.4",
     "nuxt-icon": "^0.5.0",
     "nuxt-mongoose": "^1.0.3",
@@ -22,6 +22,7 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
-    "@pinia/nuxt": "^0.5.1"
+    "@pinia/nuxt": "^0.5.1",
+    "socket.io-client": "^4.7.2"
   }
 }

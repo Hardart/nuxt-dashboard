@@ -8,17 +8,18 @@ function createItem() {
   }
 }
 
-const items = Array(10)
-  .fill('')
-  .map(v => createItem())
+const items = Array(10).fill('').map(createItem)
 </script>
 
 <template>
   <main class="lg:px-6 relative h-full">
     <div class="flex flex-col h-full">
-      <div v-for="item in items">{{ item.fullName }} - {{ item.email }}</div>
-      <Filter />
-      <ShowBy />
+      <div class="relative w-56 h-56 bg-yellow-200 overflow-hidden">
+        <div class="absolute w-full h-full">
+          <img src="/img.webp" class="" alt="" />
+        </div>
+      </div>
+      <UiUploadImage />
     </div>
   </main>
 </template>

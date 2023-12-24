@@ -6,6 +6,7 @@ export default defineEventHandler(event => {
       title: 'Покупатели',
       icon: 'heroicons:user-group',
       slug: 'customers',
+      to: '/customers',
     },
     {
       title: 'Заказы',
